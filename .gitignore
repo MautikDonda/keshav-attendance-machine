@@ -1,0 +1,6 @@
+/venv/
+/.env
+/logs/
+*.db
+/.idea/
+/__pycache__/
