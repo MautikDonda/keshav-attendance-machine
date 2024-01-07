@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from app.db import database
 from app.db.models import Attendance
 from app.util import logger
@@ -14,7 +16,7 @@ def add_attendance_record(card_number: str) -> int:
         logger.logger.info(e)
 
 
-def get_all_records():
+def get_all_records(from_date: datetime | None = None, to_date: datetime | None = None):
     logger.logger.debug(f"GET ALL RECORDS")
     return [model for model in Attendance.select()]
 

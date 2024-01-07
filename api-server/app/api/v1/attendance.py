@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from fastapi import APIRouter
 
 from app.api.schema import SwipeCard, SwipeCardResponse
@@ -11,6 +13,11 @@ def fetch_all_records():
     resp = get_all_records()
     return resp
 
+
+@router.get("/download")
+def download_attendance_records(from_date: datetime, to_date: datetime):
+    resp = get_all_records(from_date, to_date)
+    
 
 @router.delete("")
 def delete_all_swipe_records():

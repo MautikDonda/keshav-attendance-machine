@@ -3,6 +3,7 @@ from datetime import datetime
 import uuid
 
 import starlette.responses
+import uvicorn
 from fastapi import FastAPI
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
@@ -43,3 +44,7 @@ def index():
     with open('config.html', 'r') as file:
         html_content = file.read()
     return HTMLResponse(html_content, 200)
+
+
+if __name__ == '__main__':
+    uvicorn.run('main:app')
