@@ -1,38 +1,18 @@
-import json
-
-from app.api.schema import SyncUpAPISchema
-from app.db import database
-from app.db.models import System
+from app.db import get_cursor
 
 
-def set_live_swipe_api(data: SyncUpAPISchema):
-    with database.atomic():
-        if not System.select().where(System.key == "live_swipe"):
-            System.create(key="live-swipe", value=data.model_dump_json())
-        else:
-            System.update(value=data.model_dump_json()).where(System.key == "live_swipe").execute()
+def set_sys_key(key: str, value: str) -> None:
+    is_key_exists = get_cursor().execute("SELECT * FROM system WHERE key=?", (key,))
+    if len(is_key_exists.fetchall()) > 0:
+        is_key_exists.close()
+        get_cursor().execute("update system set value=? where key=?", (key, value, )).close()
+    else:
+        get_cursor().execute("insert into system (key, value) values (?, ?)", (key, value)).close()
 
 
 def sync_up_settings_from_db():
     resp = {}
-    with database.atomic():
-        for system in System.select():
-            if system.key in ("live-swipe", 'server_time', "attendance_sync"):
-                resp[system.key] = json.loads(system.value)
+    data = get_cursor().execute("select key, value from system")
+    for system in data:
+        resp[system[0]] = system[1]
     return resp
-
-
-def set_server_time_api(data: SyncUpAPISchema):
-    with database.atomic():
-        if not System.select().where(System.key == "server_time"):
-            System.create(key="server_time", value=data.model_dump_json())
-        else:
-            System.update(value=data.model_dump_json()).where(System.key == "server_time").execute()
-
-
-def set_attendance_sync_api(data: SyncUpAPISchema):
-    with database.atomic():
-        if not System.select().where(System.key == "attendance_sync"):
-            System.create(key="attendance_sync", value=data.model_dump_json())
-        else:
-            System.update(value=data.model_dump_json()).where(System.key == "attendance_sync").execute()

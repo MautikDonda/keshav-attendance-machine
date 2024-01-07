@@ -1,15 +1,12 @@
 from datetime import datetime
 
-import uuid
-
 import starlette.responses
+import uuid
 import uvicorn
 from fastapi import FastAPI
-from starlette.responses import HTMLResponse, JSONResponse
-from starlette.staticfiles import StaticFiles
+from starlette.responses import HTMLResponse
 
 from app import api
-from app.db import database
 from app.db.models import create_tables
 from app.util.logger import logger
 
@@ -22,7 +19,7 @@ app.include_router(api.router)
 
 
 @app.on_event("startup")
-async def startup():
+def startup():
     create_tables()
 
 
@@ -30,12 +27,10 @@ async def startup():
 async def add_cors_header(request, call_next):
     uid = uuid.uuid4()
     logger.info(f"Request: {uid}\t{request.method}\t{request.url}\t{request.headers}\t{request.query_params}")
-    database.connect(True)
     start_time = datetime.now()
     response: starlette.responses.Response = await call_next(request)
     logger.info(f"Response: {uid}\t{response.status_code}")
     response.headers['X-Process-Time'] = str((datetime.now() - start_time).microseconds / 1000)
-    database.close()
     return response
 
 
