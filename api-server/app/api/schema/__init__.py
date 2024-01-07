@@ -26,6 +26,9 @@ class SwipeCardResponse(BaseModel):
     card_number: str
     swipe_time: datetime
     machine_name: str
+    user_id: str | None
+    user_display_id: str | None
+    user_name: str | None
 
 
 class SyncUpAPISchema(BaseModel):

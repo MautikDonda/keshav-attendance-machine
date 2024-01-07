@@ -1,39 +1,42 @@
-from datetime import datetime
 import uuid
-from peewee import *
 
-from app import db
+from app.db import get_cursor
 
+_migration_1_base_tables = '''
+create table if not exists main.attendance
+(
+    id           INTEGER  primary key AUTOINCREMENT,
+    card_number  VARCHAR(255) not null,
+    swipe_time   DATETIME     not null default CURRENT_TIMESTAMP,
+    machine_name VARCHAR(255) not null,
+    user_id      VARCHAR(255)
+);
 
-class BaseModel(Model):
-    class Meta:
-        database = db.database
+create table if not exists main.externals_user
+(
+    id          VARCHAR(255) not null primary key,
+    first_name  VARCHAR(255) not null,
+    last_name   VARCHAR(255) not null,
+    display_id  VARCHAR(255) not null,
+    card_number VARCHAR(255) not null
+);
 
+create table if not exists  main.system
+(
+    id    INTEGER      primary key AUTOINCREMENT,
+    key   VARCHAR(255) not null,
+    value VARCHAR(255) not null
+);
 
-class System(BaseModel):
-    id = AutoField()
-    key = CharField(null=False, unique=True)
-    value = CharField(null=False)
-
-
-from app.util.helpers import get_machine_name
-
-
-class Attendance(BaseModel):
-    id = AutoField()
-    card_number = CharField()
-    swipe_time = DateTimeField(default=datetime.now)
-    machine_name = CharField(null=False, default=get_machine_name())
+create unique index if not exists system_key on system (key);
+'''
 
 
 def create_tables():
-    with db.database:
-        db.database.create_tables([System])
-        db.database.create_tables([Attendance])
-        with db.database.atomic():
-            for key, value in _default_system().items():
-                if not System.select(System.value).where(System.key == key):
-                    System.create(key=key, value=value)
+    get_cursor().executescript(_migration_1_base_tables).close()
+    # dump machine default values
+    for key, value in _default_system().items():
+        get_cursor().execute("INSERT INTO system (key, value) VALUES (?,?)", (key, value)).close()
 
 
 def _default_system():
