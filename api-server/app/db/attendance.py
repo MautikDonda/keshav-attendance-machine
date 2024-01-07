@@ -16,7 +16,7 @@ def add_attendance_record(card_number: str) -> int:
         logger.logger.info(e)
 
 
-def get_all_records(from_date: datetime | None = None, to_date: datetime | None = None):
+def get_all_records(from_date: datetime | None = None, to_date: datetime | None = None) -> list[Attendance]:
     logger.logger.debug(f"GET ALL RECORDS")
     return [model for model in Attendance.select()]
 
