@@ -1,0 +1,14 @@
+.linear-text {
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px solid #e29970;
+  line-height: 0.1em;
+  margin: 20px 0 20px;
+}
+
+.linear-text span {
+  margin-top: 10px;
+  background: #fff;
+  padding: 0 10px;
+  color: #e29970;
+}
