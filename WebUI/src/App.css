@@ -1,0 +1,15 @@
+@font-face {
+  font-family: Roboto;
+  src: url("../public/fonts/Roboto-Black.ttf");
+}
+
+@font-face {
+  font-family: Roboto;
+  font-weight: bold;
+  src: url("../public/fonts/Roboto-Bold.ttf");
+}
+
+.App {
+  text-align: center;
+  font-family: "Roboto", sans-serif;
+}

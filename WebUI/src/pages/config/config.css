@@ -1,0 +1,57 @@
+.main-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.center-align {
+  text-align: center;
+}
+
+.layout-container {
+  width: 86.51vw;
+  flex-shrink: 0;
+  border-radius: 15px;
+  border: 0.5px solid #e29970;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  height: min-content;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.orange-color {
+  color: #e29970;
+}
+
+.ant-picker,
+.ant-input,
+.ant-btn,
+.ant-select {
+  border: 1px solid #e29970;
+  height: 5.89vh;
+  width: 70.23vw;
+}
+
+.ant-select {
+  border-radius: 6px;
+}
+
+.ant-select .anticon {
+  color: #e29970;
+}
+
+.ant-btn-default:not(:disabled):not(.ant-btn-disabled):hover,
+.ant-btn-default:not(:disabled):not(.ant-btn-disabled):active {
+  color: white;
+  background-color: #e29970;
+  border-color: #e29970;
+}
+
+.raised-button {
+  background-color: #e29970;
+  color: white;
+}
+
+.cleanup-button {
+  width: max-content;
+}
