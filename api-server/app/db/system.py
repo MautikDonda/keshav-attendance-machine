@@ -16,7 +16,7 @@ def get_systems():
             mode = system[1]
         elif system[0] == 'machine_name':
             machine_name = system[1]
-        elif systems[0] == 'machine_id':
+        elif system[0] == 'machine_id':
             machine_id = system[1]
 
     model = SystemDetails(
@@ -33,5 +33,6 @@ def update_machine_info(data: UpdateMachineName):
     cursor.execute("update system set value = ? where key = ?", (data.machine_name, 'machine_name'))
     cursor.execute("update system set value = ? where key = ?", (data.mode, 'mode'))
     # Update IP
+    cursor.connection.commit()
     cursor.close()
     return get_systems()

@@ -20,6 +20,7 @@ def add_attendance_record(card_number: str) -> SwipeCardResponse:
         new_attendance.execute(
             'INSERT INTO attendance (card_number, machine_name, user_id, swipe_time) VALUES (?, ?, ?, ?)',
             (card_number, machine_name, user[0] if user is not None else None, datetime.now()))
+        new_attendance.connection.commit()
         new_attendance.close()
         return SwipeCardResponse(
             id=0,
@@ -30,7 +31,6 @@ def add_attendance_record(card_number: str) -> SwipeCardResponse:
             user_display_id=user[1] if user is not None else None,
             user_name=user[2] if user is not None else None
         )
-
     except Exception as e:
         logger.logger.error(f"FAILED TO ADD CARD NUMBER: {card_number}")
         raise e
@@ -47,7 +47,6 @@ def get_all_records(from_date: datetime | None = None, to_date: datetime | None 
        "t1"."machine_name",
        "t1"."user_id",
        "t2"."display_id" "user_display_id",
-       "t2"."id" "user_id",
        "t2".first_name || " " || "t2".last_name name 
     FROM
         "attendance" "t1" 
@@ -82,5 +81,6 @@ def get_all_records(from_date: datetime | None = None, to_date: datetime | None 
 def delete_all_records():
     logger.logger.debug(f"Start: DELETE FROM ")
     cursor = get_cursor()
-    cursor.execute("DELETE FROM attendance").close()
+    cursor.execute("DELETE FROM attendance").connection.commit()
+    cursor.close()
     logger.logger.debug("End: DELETED ALL RECORDS")

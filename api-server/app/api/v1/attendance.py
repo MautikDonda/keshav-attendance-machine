@@ -4,19 +4,19 @@ from fastapi import APIRouter
 from starlette.responses import Response, JSONResponse
 
 from app.api.schema import SwipeCard, SwipeCardResponse
-from app.db.attendance import add_attendance_record, get_all_records, delete_all_records
+from app.db import attendance
 
 router = APIRouter(prefix="/attendance", tags=["Attendance"])
 
 
 @router.get("", response_model=list[SwipeCardResponse])
 def fetch_all_records():
-    return get_all_records()
+    return attendance.get_all_records()
 
 
 @router.get("/download")
 def download_attendance_records(from_date: datetime, to_date: datetime):
-    resp = get_all_records(from_date, to_date)
+    resp = attendance.get_all_records(from_date, to_date)
     headers = "UserId, UserDisplayId, UserName, CardNumber, Swipe Time, Machine Name"
     content = headers + '\n'
     for record in resp:
@@ -31,13 +31,13 @@ def download_attendance_records(from_date: datetime, to_date: datetime):
 
 @router.delete("")
 def delete_all_swipe_records():
-    delete_all_records()
+    attendance.delete_all_records()
     return {"message": "All records deleted"}
 
 
 @router.post("/swipe", status_code=201, response_model=SwipeCardResponse)
 def swipe_card(data: SwipeCard):
-    resp = add_attendance_record(data.card_number)
+    resp = attendance.add_attendance_record(data.card_number)
     if resp is not None:
         return resp
     return JSONResponse(status_code=500, content=f"Failed to process the request")

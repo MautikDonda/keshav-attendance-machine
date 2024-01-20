@@ -7,7 +7,7 @@ create table if not exists main.attendance
 (
     id           INTEGER  primary key AUTOINCREMENT,
     card_number  VARCHAR(255) not null,
-    swipe_time   DATETIME     not null default CURRENT_TIMESTAMP,
+    swipe_time   DATETIME     not null,
     machine_name VARCHAR(255) not null,
     user_id      VARCHAR(255)
 );
@@ -36,7 +36,10 @@ def create_tables():
     get_cursor().executescript(_migration_1_base_tables).close()
     # dump machine default values
     for key, value in _default_system().items():
-        get_cursor().execute("INSERT INTO system (key, value) VALUES (?,?)", (key, value)).close()
+        # check whether data with Key already exists
+        a = get_cursor().execute("SELECT * FROM system where key = ?", (key,))
+        if not a.fetchone():
+            get_cursor().execute("INSERT INTO system (key, value) VALUES (?,?)", (key, value)).connection.commit()
 
 
 def _default_system():

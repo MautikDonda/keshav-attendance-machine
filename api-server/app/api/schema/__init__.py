@@ -1,5 +1,4 @@
 from datetime import datetime
-from enum import Enum
 
 from pydantic import BaseModel
 
@@ -34,3 +33,11 @@ class SwipeCardResponse(BaseModel):
 class SyncUpAPISchema(BaseModel):
     url: str
     method: str
+
+
+class ExternalUser(BaseModel):
+    id: str
+    display_id: str
+    first_name: str
+    last_name: str
+    card_number: str

@@ -28,9 +28,14 @@ async def add_cors_header(request, call_next):
     uid = uuid.uuid4()
     logger.info(f"Request: {uid}\t{request.method}\t{request.url}\t{request.headers}\t{request.query_params}")
     start_time = datetime.now()
-    response: starlette.responses.Response = await call_next(request)
-    logger.info(f"Response: {uid}\t{response.status_code}")
-    response.headers['X-Process-Time'] = str((datetime.now() - start_time).microseconds / 1000)
+    response = None
+    try:
+        response = await call_next(request)
+        logger.info(f"Response: {uid}\t{response.status_code}")
+    except Exception as e:
+        return starlette.responses.PlainTextResponse(status_code=500, content=str(e))
+    finally:
+        response.headers['X-Process-Time'] = str((datetime.now() - start_time).microseconds / 1000)
     return response
 
 
